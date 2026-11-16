@@ -1,0 +1,43 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.metrics import silhouette_score
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+iris = load_iris()
+X = StandardScaler().fit_transform(iris.data)
+
+
+
+
+
+
+
+
+km = KMeans(n_clusters=3, n_init=10, random_state=42)
+k = km.fit_predict(X)
+
+print("K-Means Score:", silhouette_score(X, k))
+
+plt.plot(range(1, 11), [
+    KMeans(n_clusters=i, n_init=10, random_state=42).fit(X).inertia_
+    for i in range(1, 11)
+])
+plt.show()
+
+
+
+
+
+
+
+
+h = AgglomerativeClustering(n_clusters=3)
+y = h.fit_predict(X)
+
+print("Hierarchical Score:", silhouette_score(X, y))
+
+dendrogram(linkage(X, method="ward"), no_labels=True)
+plt.show()
