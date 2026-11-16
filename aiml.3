@@ -1,0 +1,42 @@
+class KB:
+    def __init__(self):
+        self.rules = []
+
+    def add(self, p, c):
+        self.rules.append((set(p), c))
+
+    def forward(self, facts):
+        known = set(facts)
+        for p, c in self.rules:
+            if p <= known:
+                known.add(c)
+        return known
+
+    def backward(self, goal, facts):
+        if goal in facts:
+            return True
+        return any(c == goal and all(self.backward(x, facts) for x in p)
+                   for p, c in self.rules)
+
+
+
+
+
+
+
+
+kb = KB()
+kb.add(["fever", "cough"], "infection")
+kb.add(["fever", "fatigue"], "flu")
+kb.add(["infection", "flu"], "flu_confirmed")
+
+facts = {"fever", "cough", "fatigue"}
+
+
+
+
+
+
+
+print("Forward:", kb.forward(facts))
+print("Backward:", kb.backward("flu_confirmed", facts))
