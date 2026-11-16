@@ -1,0 +1,45 @@
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+
+
+
+
+
+
+X,y=load_digits(return_X_y=True)
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.25,random_state=42,stratify=y)
+
+sc=StandardScaler()
+X_train=sc.fit_transform(X_train)
+X_test=sc.transform(X_test)
+
+
+
+
+
+
+
+models={
+"SVM":(SVC(),{'C':[0.1,1,10],'gamma':['scale',0.01,0.001],'kernel':['linear','rbf']}),
+"RF":(RandomForestClassifier(),{'n_estimators':[50,100,200],'max_depth':[None,5,10]}),
+"AdaBoost":(AdaBoostClassifier(),{'n_estimators':[50,100,200],'learning_rate':[0.1,0.5,1.0],'estimator':[DecisionTreeClassifier(max_depth=d) for d in (1,2,3)]})
+}
+
+
+
+
+
+
+
+
+for n,(m,p) in models.items():
+    g=GridSearchCV(m,p,cv=5,n_jobs=-1)
+    g.fit(X_train,y_train)
+    print(n,accuracy_score(y_test,g.predict(X_test)))
+    print(g.best_params_)
